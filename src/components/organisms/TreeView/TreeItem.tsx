@@ -1,30 +1,80 @@
 import { FC, useState } from 'react';
-import { ChevronIcon } from '@/components/atoms';
-import { TreeNodeProperties } from '@/types/TreeNode';
+import { Checkbox, ChevronIcon } from '@/components/atoms';
+import { InputLabel } from '@/components/molecules';
+import { TreeNode } from '@/types/TreeNode';
 import TreeView, { Props as TreeViewProps } from './index';
 
-type Props = TreeNodeProperties &
-  Pick<TreeViewProps, 'checkboxOptions' | 'counted'> & {
-    label: string | JSX.Element;
-  };
+type Props = Omit<TreeViewProps, 'depth' | 'datas'> & {
+  node: TreeNode;
+};
 
-const TreeItem: FC<Props> = ({ label, value, nodes, counted, checkboxOptions }) => {
-  const [expanded, setExpanded] = useState(false);
+const TreeItem: FC<Props> = ({
+  node,
+  hasCounted = false,
+  defaultExpanded = false,
+  hasCheckbox = false,
+  checkedItems,
+  onChangeCheckbox,
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   const handleClickIcon = () => {
-    setExpanded((prev) => !prev);
+    setExpanded(prev => !prev);
+  };
+
+  const getLabel = (node: TreeNode) => {
+    const { key, value, nodes } = node;
+    const label = hasCounted && nodes?.length ? `${value} (${node.getSubKeyCount()})` : value;
+
+    if (hasCheckbox) {
+      const checked = node.hasAllInputKeys(checkedItems || []);
+      const indeterminate = node.hasSomeInputKeys(checkedItems || []);
+
+      return (
+        <InputLabel
+          label={label}
+          input={
+            <Checkbox
+              checked={checked}
+              indeterminate={indeterminate}
+              onChange={e => onChangeCheckbox && onChangeCheckbox(e, node)}
+              name={key}
+            />
+          }
+        />
+      );
+    }
+
+    return <>{label}</>;
+  };
+
+  const getOptimizedItems = (node: TreeNode) => {
+    if (hasCheckbox) {
+      const nonChecked = node.hasNoInputKeys(checkedItems || []);
+      return nonChecked ? undefined : checkedItems;
+    }
+    return checkedItems;
   };
 
   return (
     <li>
-      <div className={`flex items-center gap-1 ${nodes ? 'cursor-pointer' : ''} border-b py-1`}>
+      <div className={`flex items-center gap-1 border-b py-1 ${node.nodes ? 'cursor-pointer' : ''}`}>
         <span className="w-4 flex items-center justify-center" onClick={handleClickIcon}>
-          {nodes ? <ChevronIcon expanded={expanded} /> : '◦'}
+          {node.nodes ? <ChevronIcon expanded={expanded} /> : '◦'}
         </span>
-        {label}
+        {getLabel(node)}
       </div>
-      {nodes && (
-        <TreeView depth={1} data={nodes} checkboxOptions={checkboxOptions} counted={counted} expanded={expanded} />
+      {node.nodes && (
+        <TreeView
+          depth={1}
+          datas={node.nodes}
+          hasCounted={hasCounted}
+          expanded={expanded}
+          defaultExpanded={defaultExpanded}
+          hasCheckbox={hasCheckbox}
+          checkedItems={getOptimizedItems(node)}
+          onChangeCheckbox={onChangeCheckbox}
+        />
       )}
     </li>
   );
