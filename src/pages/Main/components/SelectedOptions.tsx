@@ -2,15 +2,17 @@ import { FC } from 'react';
 import { Tag } from '@/components/atoms';
 import { CloseableTag } from '@/components/molecules';
 import { TreeNode } from '@/types/TreeNode';
+import { LoadingUI } from '@/components/organisms';
 
 type Props = {
   totalCount: number;
   selectedCount: number;
   options: TreeNode[];
+  isLoading: boolean;
   onDeleteOption: (node: TreeNode) => void;
 };
 
-const SelectedOptions: FC<Props> = ({ totalCount, selectedCount, options, onDeleteOption }) => {
+const SelectedOptions: FC<Props> = ({ totalCount, selectedCount, options, isLoading, onDeleteOption }) => {
   const getEmphasizedPath = (node: TreeNode) => {
     let path = node.getPath({ hasRootPath: false });
     const checkedAll = node.nodes?.length ? ':all' : '';
@@ -36,17 +38,23 @@ const SelectedOptions: FC<Props> = ({ totalCount, selectedCount, options, onDele
   return (
     <div className="flex flex-col gap-4">
       <h4>선택된 옵션</h4>
-      <Tag>
-        <span>
-          {selectedCount} / <strong>{totalCount}</strong> selected
-        </span>
-      </Tag>
-      <span className="border-t" />
-      {options.map((option) => (
-        <CloseableTag key={option.key} onClick={() => onDeleteOption(option)}>
-          {getEmphasizedPath(option)}
-        </CloseableTag>
-      ))}
+      {isLoading ? (
+        <LoadingUI className="h-36" />
+      ) : (
+        <>
+          <Tag>
+            <span>
+              {selectedCount} / <strong>{totalCount}</strong> selected
+            </span>
+          </Tag>
+          <span className="border-t" />
+          {options.map(option => (
+            <CloseableTag key={option.key} onClick={() => onDeleteOption(option)}>
+              {getEmphasizedPath(option)}
+            </CloseableTag>
+          ))}
+        </>
+      )}
     </div>
   );
 };

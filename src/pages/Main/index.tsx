@@ -14,6 +14,7 @@ const Main = () => {
     rows,
     searchWord,
     totalCount,
+    isLoading,
     handleChangeCheckbox,
     handleChangeValue,
     handleDeleteSearchWord,
@@ -27,6 +28,7 @@ const Main = () => {
           searchWord={searchWord}
           options={nodeData?.nodes || []}
           checkedItems={checkedKeys}
+          isLoading={isLoading}
           onChangeCheckbox={handleChangeCheckbox}
           onChangeValue={handleChangeValue}
           onDelete={handleDeleteSearchWord}
@@ -35,11 +37,12 @@ const Main = () => {
           totalCount={totalCount}
           selectedCount={checkedKeys.length}
           options={checkedNodes}
+          isLoading={isLoading}
           onDeleteOption={handleDeleteOption}
         />
       </aside>
       <main className="grow p-4 min-h-full h-fit">
-        <Assets columns={columns} rows={rows} />
+        <Assets columns={columns} rows={rows} isLoading={isLoading} />
       </main>
     </div>
   );

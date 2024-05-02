@@ -10,6 +10,7 @@ type UseHookReturn = {
   rows: Row[];
   searchWord: string;
   totalCount: number;
+  isLoading: boolean;
   handleChangeCheckbox: (e: ChangeEvent<HTMLInputElement>, node: TreeNode) => void;
   handleChangeValue: (e: ChangeEvent<HTMLInputElement>) => void;
   handleDeleteOption: (node: TreeNode) => void;
@@ -27,6 +28,7 @@ const useMain = (): UseHookReturn => {
   const [nodeData, setNodeDatas] = useState<TreeNode | null>(originNode.current);
 
   const [searchWord, setSearchWord] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const convertColumn = (column: string) => {
     const keys = column.split(',');
@@ -131,6 +133,9 @@ const useMain = (): UseHookReturn => {
       })
       .catch((e: any) => {
         console.error('csv를 불러올 수 없습니다. ', e);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -187,6 +192,7 @@ const useMain = (): UseHookReturn => {
     rows,
     searchWord,
     totalCount: originNode.current.getSubKeyCount(),
+    isLoading,
     handleChangeCheckbox,
     handleChangeValue,
     handleDeleteOption,
