@@ -22,6 +22,8 @@ const AllOptions: FC<Props> = ({
   onChangeValue,
   onDelete,
 }) => {
+  const noSearchResult = searchWord && !options.length ? true : false;
+
   return (
     <div className="flex flex-col gap-4 min-h-[460px]">
       <h4>옵션 선택</h4>
@@ -30,16 +32,20 @@ const AllOptions: FC<Props> = ({
       ) : (
         <>
           <CloseableSearchBox className="self-end" value={searchWord} onChange={onChangeValue} onDelete={onDelete} />
-          <TreeView
-            key={searchWord}
-            datas={options}
-            hasCounted
-            expanded
-            defaultExpanded={searchWord ? true : false}
-            hasCheckbox
-            checkedItems={checkedItems}
-            onChangeCheckbox={onChangeCheckbox}
-          />
+          {noSearchResult ? (
+            <div className="text-sm text-center pt-12">검색 결과가 없습니다.</div>
+          ) : (
+            <TreeView
+              key={searchWord}
+              datas={options}
+              hasCounted
+              expanded
+              defaultExpanded={searchWord ? true : false}
+              hasCheckbox
+              checkedItems={checkedItems}
+              onChangeCheckbox={onChangeCheckbox}
+            />
+          )}
         </>
       )}
     </div>
