@@ -1,4 +1,4 @@
-export type TreeNodeProperties = Pick<TreeNode, 'key' | 'value' | 'nodes'>;
+export type TreeNodeProperties = Pick<TreeNode, 'key' | 'name' | 'nodes'>;
 
 export class TreeNode {
   static PATH_SEPERATOR = ' > ';
@@ -9,13 +9,13 @@ export class TreeNode {
   private path: string = '';
   private subKeys: TreeNode['key'][] = [];
 
-  constructor(public key: string, public value: string, parent?: TreeNode) {
+  constructor(public key: string, public name: string, parent?: TreeNode) {
     this.key = key;
-    this.value = value;
-    this.path = value;
+    this.name = name;
+    this.path = name;
     if (parent) {
       this.parent = parent;
-      this.path = `${parent.getPath()}${TreeNode.PATH_SEPERATOR}${value}`;
+      this.path = `${parent.getPath()}${TreeNode.PATH_SEPERATOR}${name}`;
     }
   }
 
@@ -28,7 +28,7 @@ export class TreeNode {
   }
 
   getChildNodeByKey(key: TreeNode['key']) {
-    return this.nodes?.find((node) => node.key === key);
+    return this.nodes?.find(node => node.key === key);
   }
 
   getSubKeyCount(): number {
@@ -53,7 +53,7 @@ export class TreeNode {
   }
 
   searchChildNode(searchWord: string) {
-    const isIncluded = this.value.toLocaleLowerCase().includes(searchWord.toLocaleLowerCase());
+    const isIncluded = this.name.toLocaleLowerCase().includes(searchWord.toLocaleLowerCase());
 
     if (!this.nodes) {
       return isIncluded ? this : null;
@@ -75,14 +75,14 @@ export class TreeNode {
   }
 
   cloneDeep(): TreeNode {
-    const newNode = new TreeNode(this.key, this.value, this.parent);
+    const newNode = new TreeNode(this.key, this.name, this.parent);
     newNode.nodes = this.nodes;
 
     if (!newNode.nodes) {
-      return new TreeNode(this.key, this.value, this.parent);
+      return new TreeNode(this.key, this.name, this.parent);
     }
 
-    newNode.nodes = newNode.nodes.map((node) => node.cloneDeep());
+    newNode.nodes = newNode.nodes.map(node => node.cloneDeep());
 
     return newNode;
   }
@@ -121,7 +121,7 @@ export class TreeNode {
     const keySet = new Set(this.getSubKeys());
 
     const includedKeys = [] as typeof inputKeys;
-    keySet.forEach((key) => {
+    keySet.forEach(key => {
       if (inputSet.has(key)) {
         includedKeys.push(key);
       }

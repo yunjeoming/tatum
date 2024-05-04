@@ -23,8 +23,8 @@ const TreeItem: FC<Props> = ({
   };
 
   const getLabel = (node: TreeNode) => {
-    const { key, value, nodes } = node;
-    const label = hasCounted && nodes?.length ? `${value} (${node.getSubKeyCount()})` : value;
+    const { key, name, nodes } = node;
+    const label = hasCounted && nodes?.length ? `${name} (${node.getSubKeyCount()})` : name;
 
     if (hasCheckbox) {
       const checked = node.hasAllInputKeys(checkedItems || []);
