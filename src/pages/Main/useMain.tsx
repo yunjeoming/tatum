@@ -25,7 +25,7 @@ const useMain = (): UseHookReturn => {
   const [rows, setRows] = useState<Row[]>([]);
   const [checkedKeys, setCheckedDatas] = useState<TreeNode['key'][]>([]);
   const [checkedNodes, setCheckedNodes] = useState<TreeNode[]>([]);
-  const [nodeData, setNodeDatas] = useState<TreeNode | null>(originNode.current);
+  const [nodeData, setNodeData] = useState<TreeNode | null>(originNode.current);
 
   const [searchWord, setSearchWord] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -128,8 +128,9 @@ const useMain = (): UseHookReturn => {
         const nodeData = convertNodeData(rowData);
         mapData.current = newMapData;
         originNode.current = nodeData;
+        console.log(nodeData);
         setColumns(columns);
-        setNodeDatas(nodeData);
+        setNodeData(nodeData);
       })
       .catch((e: any) => {
         console.error('csv를 불러올 수 없습니다. ', e);
@@ -169,7 +170,7 @@ const useMain = (): UseHookReturn => {
 
     const originData = originNode.current.cloneDeep();
     const searchedData = originData.searchChildNode(searchWord);
-    setNodeDatas(searchedData);
+    setNodeData(searchedData);
   };
 
   const handleDeleteOption = (node: TreeNode) => {
@@ -181,7 +182,7 @@ const useMain = (): UseHookReturn => {
 
   const handleDeleteSearchWord = () => {
     setSearchWord('');
-    setNodeDatas(originNode.current);
+    setNodeData(originNode.current);
   };
 
   return {
