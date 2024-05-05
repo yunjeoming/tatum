@@ -128,7 +128,6 @@ const useMain = (): UseHookReturn => {
         const nodeData = convertNodeData(rowData);
         mapData.current = newMapData;
         originNode.current = nodeData;
-        console.log(nodeData);
         setColumns(columns);
         setNodeData(nodeData);
       })
